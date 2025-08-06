@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="0dp"
-    tools:context=".MainActivity2">
+    tools:context=".Formulario_evento">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -16,9 +16,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="Agregar Persona"
+            app:title="Agregar Evento"
             app:titleTextColor="@android:color/white"
-            android:background="?attr/colorPrimary"
+            android:background="?attr/color"
             app:navigationIcon="@drawable/back"
             app:navigationIconTint="@android:color/white" />
     </com.google.android.material.appbar.AppBarLayout>
@@ -42,11 +42,11 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Apellido"
+            android:hint="Fecha"
             android:layout_marginTop="16dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtApellido"
+                android:id="@+id/txtFecha"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName" />
@@ -55,15 +55,16 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Edad"
+            android:hint="Hora"
             android:layout_marginTop="16dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtEdad"
+                android:id="@+id/txtHora"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
+
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -73,23 +74,23 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="32dp">
             <Button
-                android:id="@+id/btnGuardarPersona"
+                android:id="@+id/btnGuardarEvento"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:backgroundTint="@color/blue_light"
-                android:text="Guardar Persona"
+                app:backgroundTint="@color/orange_ligth"
+                android:text="Guardar Evento"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="32dp"
                 android:layout_marginRight="20dp"/>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSeleccionarImagen"
+                android:id="@+id/btnImagen"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
-                android:contentDescription="Agregar_imagen"
+                android:contentDescription="Agregar una imagen"
                 android:text="Selecciona Imagen"
                 android:textSize="12dp"
-                app:backgroundTint="@color/blue"
+                app:backgroundTint="@color/orange_ligth"
                 app:cornerRadius="40dp"
                 app:icon="@drawable/ic_image"
                 app:iconGravity="textStart"
@@ -100,12 +101,12 @@
 
 
         <ImageView
-            android:id="@+id/imgPersona"
+            android:id="@+id/imgEvento"
             android:layout_width="250dp"
             android:layout_height="250dp"
             android:layout_marginTop="16dp"
             android:scaleType="centerCrop"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_gravity="center_horizontal" />
     </LinearLayout>
 
 </LinearLayout>

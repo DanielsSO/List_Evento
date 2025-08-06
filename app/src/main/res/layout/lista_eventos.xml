@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Lista_Personas">
+    tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -14,11 +14,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="Personas"
-            app:titleTextColor="@android:color/white"
-            android:background="?attr/colorPrimary"
-            app:navigationIcon="@drawable/back"
-            app:navigationIconTint="@android:color/white" />
+            app:title="Eventos" app:titleTextColor="@android:color/white"
+            android:background="?attr/color"/>
     </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
@@ -31,7 +28,7 @@
             android:id="@+id/txtListaEventos" android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
-            android:text="Personas registradas" android:textSize="17sp"
+            android:text="Eventos Registrados" android:textSize="17sp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"/>
@@ -55,16 +52,17 @@
                     android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="60dp" android:drawableStart="@drawable/ic_search"
                     android:drawablePadding="8dp"
                     android:fontFamily="sans-serif-medium"
-                    android:hint="Buscar Persona" android:inputType="text"
+                    android:hint="Buscar Evento" android:inputType="text"
                     android:textSize="15sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerPersonas"
+            android:id="@+id/recyclerEvento"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingHorizontal="8dp" />
+
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
@@ -74,7 +72,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:contentDescription="Agregar"
-        app:backgroundTint="@color/blue"
+        app:backgroundTint="@color/orange"
         app:cornerRadius="40dp"
         app:icon="@drawable/ic_add"
         app:iconGravity="textStart"

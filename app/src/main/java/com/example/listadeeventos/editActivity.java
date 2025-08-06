@@ -8,37 +8,36 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
-
-import androidx.appcompat.widget.Toolbar;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.listadeeventos.R;
-import com.google.android.material.textfield.TextInputEditText;
-
-public class MainActivity2 extends AppCompatActivity {
+public class editActivity extends AppCompatActivity {
 
     private static final int REQUEST_STORAGE_PERMISSION = 101;
     private static final int PICK_IMAGE_REQUEST = 102;
-    private TextInputEditText txtNombre, txtApellido, txtEdad;
-    private Button btnGuardarPersona;
+    EditText etNombre, etApellido, etEdad;
+    Button btnEditarPersona;
+    int position = -1;
+
     private Button btnSeleccionarImagen;
     private ImageView imgPersona;
+
     private Uri imagenSeleccionadaUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_edit);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -51,13 +50,29 @@ public class MainActivity2 extends AppCompatActivity {
             finish();
         });
 
-        txtNombre = findViewById(R.id.txtNombre);
-        txtApellido = findViewById(R.id.txtApellido);
-        txtEdad = findViewById(R.id.txtEdad);
-        btnGuardarPersona = findViewById(R.id.btnGuardarPersona);
+        etNombre = findViewById(R.id.etNombre);
+        etApellido = findViewById(R.id.etApellido);
+        etEdad = findViewById(R.id.etEdad);
+        btnEditarPersona = findViewById(R.id.btnEditarPersona);
 
-        btnGuardarPersona.setOnClickListener(v -> {
-            guardarPersona();
+        Intent intent = getIntent();
+        String nombre = intent.getStringExtra("nombre");
+        String apellido = intent.getStringExtra("apellido");
+        String edad = intent.getStringExtra("edad");
+        String imagen = intent.getStringExtra("imagen");
+        position = intent.getIntExtra("position", -1);
+
+
+        etNombre.setText(nombre);
+        etApellido.setText(apellido);
+        etEdad.setText(edad);
+
+        if (imagen != null) {
+            imagenSeleccionadaUri = Uri.parse(imagen);
+            imgPersona.setImageURI(imagenSeleccionadaUri);
+        }
+        btnEditarPersona.setOnClickListener(v -> {
+            editarPersona();
         });
 
         btnSeleccionarImagen = findViewById(R.id.btnSeleccionarImagen);
@@ -69,13 +84,13 @@ public class MainActivity2 extends AppCompatActivity {
 
     private void verificarPermisosYSeleccionarImagen() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_MEDIA_IMAGES}, 1);
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_MEDIA_IMAGES}, 1);
             }else {
                 abrirGaleria();
             }
         }else {
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION);
             }else {
                 abrirGaleria();
@@ -97,21 +112,22 @@ public class MainActivity2 extends AppCompatActivity {
             imgPersona.setImageURI(data.getData());
         }
     }
-    private void guardarPersona() {
-        String nombre = txtNombre.getText().toString().trim();
-        String apellido = txtApellido.getText().toString().trim();
-        String edad = txtEdad.getText().toString().trim();
+
+    private void editarPersona() {
+        String nombre = etNombre.getText().toString().trim();
+        String apellido = etApellido.getText().toString().trim();
+        String edad = etEdad.getText().toString().trim();
 
         if (TextUtils.isEmpty(nombre)) {
-            txtNombre.setError("El nombre es requerido");
+            etNombre.setError("El nombre es requerido");
             return;
         }
         if (TextUtils.isEmpty(apellido)) {
-            txtApellido.setError("El apellido es requerido");
+            etApellido.setError("El apellido es requerido");
             return;
         }
         if (TextUtils.isEmpty(edad)) {
-            txtEdad.setError("La edad es requerida");
+            etEdad.setError("La edad es requerida");
             return;
         }
 
@@ -119,6 +135,10 @@ public class MainActivity2 extends AppCompatActivity {
         resultIntent.putExtra("nombre", nombre);
         resultIntent.putExtra("apellido", apellido);
         resultIntent.putExtra("edad", edad);
+
+        if (position != -1) {
+            resultIntent.putExtra("position", position);
+        }
 
         setResult(RESULT_OK, resultIntent);
         finish();

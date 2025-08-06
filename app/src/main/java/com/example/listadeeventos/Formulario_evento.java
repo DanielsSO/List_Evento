@@ -24,21 +24,20 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.listadeeventos.R;
 import com.google.android.material.textfield.TextInputEditText;
 
-public class MainActivity2 extends AppCompatActivity {
+public class Formulario_evento extends AppCompatActivity {
 
     private static final int REQUEST_STORAGE_PERMISSION = 101;
     private static final int PICK_IMAGE_REQUEST = 102;
-    private TextInputEditText txtNombre, txtApellido, txtEdad;
-    private Button btnGuardarPersona;
+    private TextInputEditText txtNombre, txtFecha, txtHora;
+    private Button btnGuardarEvento;
     private Button btnSeleccionarImagen;
-    private ImageView imgPersona;
-    private Uri imagenSeleccionadaUri;
+    private ImageView imgEvento;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.form_evento);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -52,16 +51,16 @@ public class MainActivity2 extends AppCompatActivity {
         });
 
         txtNombre = findViewById(R.id.txtNombre);
-        txtApellido = findViewById(R.id.txtApellido);
-        txtEdad = findViewById(R.id.txtEdad);
-        btnGuardarPersona = findViewById(R.id.btnGuardarPersona);
+        txtFecha = findViewById(R.id.txtFecha);
+        txtHora = findViewById(R.id.txtHora);
+        btnGuardarEvento = findViewById(R.id.btnGuardarEvento);
 
-        btnGuardarPersona.setOnClickListener(v -> {
-            guardarPersona();
+        btnGuardarEvento.setOnClickListener(v -> {
+            guardarEvento();
         });
 
-        btnSeleccionarImagen = findViewById(R.id.btnSeleccionarImagen);
-        imgPersona = findViewById(R.id.imgPersona);
+        btnSeleccionarImagen = findViewById(R.id.btnImagen);
+        imgEvento = findViewById(R.id.imgEvento);
         btnSeleccionarImagen.setOnClickListener(v -> {
             verificarPermisosYSeleccionarImagen();
         });
@@ -93,34 +92,33 @@ public class MainActivity2 extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            Uri selectedImageUri = data.getData();
-            imgPersona.setImageURI(data.getData());
+            imgEvento.setImageURI(data.getData());
         }
     }
-    private void guardarPersona() {
+    private void guardarEvento() {
         String nombre = txtNombre.getText().toString().trim();
-        String apellido = txtApellido.getText().toString().trim();
-        String edad = txtEdad.getText().toString().trim();
+        String fecha = txtFecha.getText().toString().trim();
+        String hora = txtHora.getText().toString().trim();
 
         if (TextUtils.isEmpty(nombre)) {
             txtNombre.setError("El nombre es requerido");
             return;
         }
-        if (TextUtils.isEmpty(apellido)) {
-            txtApellido.setError("El apellido es requerido");
+        if (TextUtils.isEmpty(fecha)) {
+            txtFecha.setError("La fecha es requerida");
             return;
         }
-        if (TextUtils.isEmpty(edad)) {
-            txtEdad.setError("La edad es requerida");
-            return;
+        if (TextUtils.isEmpty(hora)) {
+            txtHora.setError("La hora es requerida");
         }
 
         Intent resultIntent = new Intent();
         resultIntent.putExtra("nombre", nombre);
-        resultIntent.putExtra("apellido", apellido);
-        resultIntent.putExtra("edad", edad);
+        resultIntent.putExtra("fecha", fecha);
+        resultIntent.putExtra("hora", hora);
 
         setResult(RESULT_OK, resultIntent);
         finish();
     }
+
 }

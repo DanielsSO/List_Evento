@@ -16,7 +16,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="Agregar Persona"
+            app:title="Editar"
             app:titleTextColor="@android:color/white"
             android:background="?attr/colorPrimary"
             app:navigationIcon="@drawable/back"
@@ -33,7 +33,7 @@
         android:hint="Nombre"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/txtNombre"
+            android:id="@+id/etNombre"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName" />
@@ -46,7 +46,7 @@
             android:layout_marginTop="16dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtApellido"
+                android:id="@+id/etApellido"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName" />
@@ -59,11 +59,13 @@
             android:layout_marginTop="16dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtEdad"
+                android:id="@+id/etEdad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
+
+
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -72,15 +74,15 @@
             android:gravity="center_horizontal"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="32dp">
-            <Button
-                android:id="@+id/btnGuardarPersona"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:backgroundTint="@color/blue_light"
-                android:text="Guardar Persona"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="32dp"
-                android:layout_marginRight="20dp"/>
+        <Button
+            android:id="@+id/btnEditarPersona"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:backgroundTint="@color/blue_light"
+            android:text="Guardar Persona"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="32dp"
+            android:layout_marginRight="20dp"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSeleccionarImagen"

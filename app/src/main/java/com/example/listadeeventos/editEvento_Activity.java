@@ -8,37 +8,34 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
-
-import androidx.appcompat.widget.Toolbar;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.listadeeventos.R;
-import com.google.android.material.textfield.TextInputEditText;
-
-public class MainActivity2 extends AppCompatActivity {
-
+public class editEvento_Activity extends AppCompatActivity {
     private static final int REQUEST_STORAGE_PERMISSION = 101;
     private static final int PICK_IMAGE_REQUEST = 102;
-    private TextInputEditText txtNombre, txtApellido, txtEdad;
-    private Button btnGuardarPersona;
-    private Button btnSeleccionarImagen;
-    private ImageView imgPersona;
+    EditText etNombre, etFecha, etHora;
+    Button btnEditarEvento;
+    int position = -1;
+    private Button btnImagen;
+    private ImageView imgEvento;
     private Uri imagenSeleccionadaUri;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_edit_evento);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -51,18 +48,34 @@ public class MainActivity2 extends AppCompatActivity {
             finish();
         });
 
-        txtNombre = findViewById(R.id.txtNombre);
-        txtApellido = findViewById(R.id.txtApellido);
-        txtEdad = findViewById(R.id.txtEdad);
-        btnGuardarPersona = findViewById(R.id.btnGuardarPersona);
+        etNombre = findViewById(R.id.etNombre);
+        etFecha = findViewById(R.id.etFecha);
+        etHora = findViewById(R.id.etHora);
+        btnEditarEvento = findViewById(R.id.btnEditarEvento);
 
-        btnGuardarPersona.setOnClickListener(v -> {
-            guardarPersona();
+        Intent intent = getIntent();
+        String nombre = intent.getStringExtra("nombre");
+        String fecha = intent.getStringExtra("fecha");
+        String hora = intent.getStringExtra("hora");
+        String imagen = intent.getStringExtra("imagen");
+        position = intent.getIntExtra("position", -1);
+
+        etNombre.setText(nombre);
+        etFecha.setText(fecha);
+        etHora.setText(hora);
+
+        btnEditarEvento.setOnClickListener(v -> {
+            editarEvento();
         });
 
-        btnSeleccionarImagen = findViewById(R.id.btnSeleccionarImagen);
-        imgPersona = findViewById(R.id.imgPersona);
-        btnSeleccionarImagen.setOnClickListener(v -> {
+        if (imagen != null) {
+            imagenSeleccionadaUri = Uri.parse(imagen);
+            imgEvento.setImageURI(imagenSeleccionadaUri);
+        }
+
+        btnImagen = findViewById(R.id.btnImagen);
+        imgEvento = findViewById(R.id.imgEvento);
+        btnImagen.setOnClickListener(v -> {
             verificarPermisosYSeleccionarImagen();
         });
     }
@@ -83,6 +96,7 @@ public class MainActivity2 extends AppCompatActivity {
         }
     }
 
+
     private void abrirGaleria() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
@@ -94,31 +108,27 @@ public class MainActivity2 extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri selectedImageUri = data.getData();
-            imgPersona.setImageURI(data.getData());
+            imgEvento.setImageURI(data.getData());
         }
     }
-    private void guardarPersona() {
-        String nombre = txtNombre.getText().toString().trim();
-        String apellido = txtApellido.getText().toString().trim();
-        String edad = txtEdad.getText().toString().trim();
+    private void editarEvento() {
+        String nombre = etNombre.getText().toString().trim();
+        String fecha = etFecha.getText().toString().trim();
+        String hora = etHora.getText().toString().trim();
 
         if (TextUtils.isEmpty(nombre)) {
-            txtNombre.setError("El nombre es requerido");
-            return;
-        }
-        if (TextUtils.isEmpty(apellido)) {
-            txtApellido.setError("El apellido es requerido");
-            return;
-        }
-        if (TextUtils.isEmpty(edad)) {
-            txtEdad.setError("La edad es requerida");
+            etNombre.setError("El nombre es requerido");
             return;
         }
 
         Intent resultIntent = new Intent();
         resultIntent.putExtra("nombre", nombre);
-        resultIntent.putExtra("apellido", apellido);
-        resultIntent.putExtra("edad", edad);
+        resultIntent.putExtra("fecha", fecha);
+        resultIntent.putExtra("hora", hora);
+
+        if (position != -1) {
+            resultIntent.putExtra("position", position);
+        }
 
         setResult(RESULT_OK, resultIntent);
         finish();
