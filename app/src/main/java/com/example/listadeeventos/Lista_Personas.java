@@ -47,7 +47,7 @@ public class Lista_Personas extends AppCompatActivity implements PersonaAdapter.
     private MaterialButton btnAgregar;
     private MaterialToolbar toolbar;
     private Evento evento;
-    private static final String API_KEY = "WY22W653SES3JFA7RI4R";
+    private static final String API_KEY = "MI_TOKEN";
     private EditText editTextSearch;
 
     private ActivityResultLauncher<Intent> addPersonaLauncher;
