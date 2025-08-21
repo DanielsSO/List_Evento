@@ -1,0 +1,46 @@
+import requests
+from flask import Flask, jsonify
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)
+
+TOKEN = "MI_TOKEN" 
+
+@app.route("/eventos", methods=["GET"])
+def obtener_eventos():
+    # Datos de prueba
+    eventos = [
+        {"id": "1", "titulo": "Concierto Rock", "fecha": "2025-08-20", "hora": "20:00"},
+        {"id": "2", "titulo": "Feria de Tecnología", "fecha": "2025-09-10", "hora": "09:00"},
+        {"id": "3", "titulo": "Partido de Fútbol", "fecha": "2025-09-15", "hora": "18:00"}
+    ]
+    
+    return jsonify(eventos)
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)
+
+
+@app.route("/eventos", methods=["GET"])
+def obtener_eventos():
+    url = "https://www.eventbriteapi.com/v3/events/search/"
+    headers = {"Authorization": f"Bearer {TOKEN}"}
+    params = {"q": "concierto", "location.address": "Guatemala"}
+    
+    response = requests.get(url, headers=headers, params=params)
+    data = response.json()
+    
+    eventos = []
+    for e in data.get("events", []):
+        eventos.append({
+            "id": e["id"],
+            "titulo": e["name"]["text"],
+            "fecha": e["start"]["local"].split("T")[0],
+            "hora": e["start"]["local"].split("T")[1]
+        })
+    
+    return jsonify(eventos)
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)
