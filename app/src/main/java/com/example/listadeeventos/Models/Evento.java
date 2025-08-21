@@ -1,23 +1,31 @@
 package com.example.listadeeventos.Models;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Evento {
-    private String nombre;
+public class Evento implements Serializable {
+    private String id;
+    private String titulo;
     private String fecha;
     private String hora;
 
     public Evento() {
     }
 
-    public Evento(String nombre, String fecha, String hora) {
-        this.nombre = nombre;
+    public Evento(String id ,String nombre, String fecha, String hora) {
+        this.id = id;
+        this.titulo = nombre;
         this.fecha = fecha;
         this.hora = hora;
     }
+    public String getId() {
+        return id;
+    }
 
-    public String getNombre() {
-        return nombre;
+    public String getTitulo() {
+        return titulo;
     }
 
     public String getFecha() {
@@ -29,8 +37,8 @@ public class Evento {
     }
 
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
     }
 
     public void setFecha(String fecha) {
@@ -47,9 +55,9 @@ public class Evento {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         Evento evento = (Evento) object;
-        return Objects.equals(nombre, evento.nombre) && Objects.equals(fecha, evento.fecha) && Objects.equals(hora, evento.hora);
+        return Objects.equals(titulo, evento.titulo) && Objects.equals(fecha, evento.fecha) && Objects.equals(hora, evento.hora);
     }
 
     @Override
-    public int hashCode() {return Objects.hash(nombre, fecha, hora);}
+    public int hashCode() {return Objects.hash(titulo, fecha, hora);}
 }

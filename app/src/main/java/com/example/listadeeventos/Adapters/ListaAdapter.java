@@ -1,6 +1,5 @@
 package com.example.listadeeventos.Adapters;
 
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +9,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.listadeeventos.Lista_Personas;
-import com.example.listadeeventos.MainActivity;
 import com.example.listadeeventos.Models.Evento;
 import com.example.listadeeventos.R;
 
@@ -23,6 +20,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
     private OnItemActionListener listener;
 
     public interface OnItemActionListener {
+        void onItemClick(Evento evento );
         void onDeleteClick(Evento evento, int position);
         void onEditClick(Evento evento, int position);
     }
@@ -30,6 +28,12 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
     public ListaAdapter(List<Evento> listaEventos, OnItemActionListener listener) {
         this.listaEventos = listaEventos;
         this.listener = listener;
+    }
+
+    public void filter(List<Evento> filteredList) {
+        this.listaEventos.clear();
+        this.listaEventos.addAll(filteredList);
+        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -56,7 +60,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ListaAdapter.ViewHolder holder, int position) {
         Evento evento = listaEventos.get(position);
-        holder.txtNombre.setText(evento.getNombre());
+        holder.txtNombre.setText(evento.getTitulo());
         holder.txtFecha.setText(evento.getFecha());
         holder.txtHora.setText(evento.getHora());
 
@@ -72,10 +76,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             }
         });
 
-        holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(holder.itemView.getContext(), Lista_Personas.class);
-            holder.itemView.getContext().startActivity(intent);
-        });
+        holder.itemView.setOnClickListener(v -> listener.onItemClick(evento));
     }
 
     @Override
@@ -88,5 +89,10 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             listaEventos.remove(position);
             notifyItemRemoved(position);
         }
+    }
+
+    public void actualizarLista(List<Evento> nuevosEventos) {
+        this.listaEventos = nuevosEventos;
+        notifyDataSetChanged();
     }
 }

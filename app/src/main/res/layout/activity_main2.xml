@@ -89,7 +89,7 @@
                 android:contentDescription="Agregar_imagen"
                 android:text="Selecciona Imagen"
                 android:textSize="12dp"
-                app:backgroundTint="@color/blue"
+                app:backgroundTint="@color/blue_light"
                 app:cornerRadius="40dp"
                 app:icon="@drawable/ic_image"
                 app:iconGravity="textStart"

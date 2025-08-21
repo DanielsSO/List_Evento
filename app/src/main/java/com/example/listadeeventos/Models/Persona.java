@@ -3,9 +3,9 @@ package com.example.listadeeventos.Models;
 import java.util.Objects;
 
 public class Persona {
-    public String nombre;
-    public String apellido;
-    public String edad;
+    private String nombre;
+    private String apellido;
+    private String edad;
 
     public Persona() {
     }

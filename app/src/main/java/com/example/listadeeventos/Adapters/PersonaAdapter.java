@@ -17,10 +17,12 @@ import com.example.listadeeventos.Models.Persona;
 import com.example.listadeeventos.R;
 import com.example.listadeeventos.editActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PersonaAdapter extends RecyclerView.Adapter<PersonaAdapter.ViewHolder> {
     private List<Persona> listaPersonas;
+    private List<Persona> listaOriginal;
     private OnItemActionListener listener;
 
     public interface OnItemActionListener  {
@@ -31,6 +33,7 @@ public class PersonaAdapter extends RecyclerView.Adapter<PersonaAdapter.ViewHold
     public PersonaAdapter(List<Persona> listaPersonas, OnItemActionListener listener) {
         this.listaPersonas = listaPersonas;
         this.listener = listener;
+        this.listaOriginal = new ArrayList<>(listaPersonas);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -83,5 +86,17 @@ public class PersonaAdapter extends RecyclerView.Adapter<PersonaAdapter.ViewHold
             listaPersonas.remove(position);
             notifyItemRemoved(position);
         }
+    }
+
+    public void filter(List<Persona> filteredList) {
+        this.listaPersonas.clear();
+        this.listaPersonas.addAll(filteredList);
+        notifyDataSetChanged();
+    }
+
+    public void resetFilter() {
+        listaPersonas.clear();
+        listaPersonas.addAll(listaOriginal);
+        notifyDataSetChanged();
     }
 }

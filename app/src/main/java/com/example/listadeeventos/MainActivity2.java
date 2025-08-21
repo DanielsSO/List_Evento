@@ -32,7 +32,7 @@ public class MainActivity2 extends AppCompatActivity {
     private Button btnGuardarPersona;
     private Button btnSeleccionarImagen;
     private ImageView imgPersona;
-    private Uri imagenSeleccionadaUri;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
