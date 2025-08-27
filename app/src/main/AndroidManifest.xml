@@ -12,8 +12,6 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.INTERNET"/>
 
-
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -27,16 +25,31 @@
         android:networkSecurityConfig="@xml/network_config"
         tools:targetApi="31">
 
-        <activity android:name=".editActivity" />
-        <activity android:name=".Formulario_evento" />
-        <activity android:name=".Lista_Personas" />
-        <activity android:name=".editEvento_Activity" />
+        <activity
+            android:name=".Lista_Eventos"
+            android:theme="@style/Theme.ListaDeEventos"/>
 
         <activity
-            android:name=".MainActivity2"
-            android:exported="false" />
+            android:name=".Formulario_evento"
+            android:theme="@style/Theme.ListaDeEventos"/>
+
+        <activity android:name=".editEvento_Activity"
+            android:theme="@style/Theme.ListaDeEventos"/>
+
+        <activity android:name=".Lista_Personas"
+            android:theme="@style/Theme.ListaDeEventos"/>
+
+        <activity android:name=".MainActivity2"
+            android:theme="@style/Theme.ListaDeEventos"/>
+
+        <activity android:name=".editActivity"
+            android:theme="@style/Theme.ListaDeEventos"/>
+
         <activity
-            android:name=".MainActivity"
+            android:name=".MainActivity"/>
+        <activity android:name=".Login.Register"/>
+        <activity
+            android:name=".Login.Login"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
