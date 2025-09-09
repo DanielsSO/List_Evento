@@ -6,6 +6,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.listadeeventos.network.Performance_Monitoring;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 public class DBHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "login.db";
     private static final int DB_VERSION = 1;
@@ -52,6 +58,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public boolean checkLogin(String username, char[] password_hash) throws Exception {
         SQLiteDatabase db = getReadableDatabase();
+        long currentTime = System.nanoTime();
+        Performance_Monitoring.getInstance().startTrace("checkLogin");
+
         try(Cursor cursor = db.rawQuery(
                 "SELECT password_hash, salt FROM users WHERE username = ? LIMIT 1",
                 new String[]{username.trim()})){
@@ -66,7 +75,26 @@ public class DBHelper extends SQLiteOpenHelper {
             byte[] hash = PasswordUtils.fromBase64(hash864);
             byte[] salt = PasswordUtils.fromBase64(salt864);
 
+            boolean result = cursor.getCount() > 0;
+
+            long duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - currentTime);
+
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("duration_ms", duration);
+            metadata.put("username", username);
+            metadata.put("succes", result);
+            Performance_Monitoring.getInstance().endTrace("checkLogin", metadata);
+
             return PasswordUtils.verify(password_hash, salt, hash);
+        } catch (Exception e) {
+            long duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - currentTime);
+
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("duration_ms", duration);
+            metadata.put("username", username);
+            metadata.put("error", e.getMessage());
+            Performance_Monitoring.getInstance().endTrace("checkLogin", metadata);
+            throw e;
         }
     }
 }

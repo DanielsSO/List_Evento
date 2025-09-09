@@ -21,6 +21,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.listadeeventos.Adapters.ListaAdapter;
 import com.example.listadeeventos.Models.Evento;
+import com.example.listadeeventos.network.Analytics;
+import com.example.listadeeventos.network.Performance_Monitoring;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
@@ -30,6 +32,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -45,12 +48,22 @@ public class Lista_Eventos  extends AppCompatActivity implements ListaAdapter.On
     private MaterialToolbar toolbar;
     private EditText editTextSearch;
     private ActivityResultLauncher<Intent> addEventoLauncher;
+    private Long screenStartTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.lista_eventos);
+
+        // Analytics: Screen View
+        screenStartTime = System.nanoTime();
+        Analytics.getInstance().trackScreenView("Lista_Eventos", "Login", 0);
+
+        // Configurar user properties
+        Analytics.getInstance().setApiEnv("production");
+        Analytics.getInstance().setDeviceType("phone");
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -151,10 +164,19 @@ public class Lista_Eventos  extends AppCompatActivity implements ListaAdapter.On
         addEventoLauncher.launch(intent);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        long viewDuration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - screenStartTime);
+        Analytics.getInstance().trackScreenView("Lista_Eventos", "Login", viewDuration);
+    }
+
     private void fetchEvents() {
         OkHttpClient client = new OkHttpClient();
         Gson gson = new Gson();
         String url = "http://10.0.2.2:5000/eventos";
+        long startTime = System.nanoTime();
+        Performance_Monitoring.getInstance().startListLoadTrace();
 
         Request request = new Request.Builder().url(url).build();
         Log.d("DEBUG_URL", "Conectando a: " + url);
@@ -162,12 +184,17 @@ public class Lista_Eventos  extends AppCompatActivity implements ListaAdapter.On
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                long duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
+                Performance_Monitoring.getInstance().endListLoadTraceWithError(duration, e.getMessage(), 0);
                 e.printStackTrace();
                 runOnUiThread(() -> Toast.makeText(Lista_Eventos.this, "Error al conectar el servidor", Toast.LENGTH_LONG).show());
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                long duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
+                int statuscode = response.code();
+
                 if (response.isSuccessful()) {
                     String data = response.body().string();
                     Log.d("DEBUG_JSON", data);
@@ -175,11 +202,25 @@ public class Lista_Eventos  extends AppCompatActivity implements ListaAdapter.On
                     Type listType = new TypeToken<List<Evento>>() {}.getType();
                     List<Evento> events = gson.fromJson(data, listType);
 
+                    Analytics.getInstance().trackApiCallSuccess(
+                            "GET /eventos", duration, data.length()
+                    );
+                    Analytics.getInstance().trackListView(
+                            events.size(), "api", duration
+                    );
+                    long responseSize = response.body().contentLength();
+
                     runOnUiThread(() -> {
                         listaEventos.addAll(events);
                         listaAdapter.notifyDataSetChanged();
+
+                        Performance_Monitoring.getInstance().endListLoadTrace(events.size(), duration, statuscode, responseSize);
                     });
                 } else {
+                    Analytics.getInstance().trackApiCallError(
+                            "GET /eventos", "http_error", response.code()
+                    );
+                    Performance_Monitoring.getInstance().endListLoadTraceWithError(duration, "Error en la respuesta del servidor", statuscode);
                     runOnUiThread(() -> Toast.makeText(Lista_Eventos.this, "Error al recibir datos del servidor", Toast.LENGTH_LONG).show());
                 }
             }

@@ -5,6 +5,8 @@ import static java.util.Locale.filter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -208,5 +210,29 @@ public class Lista_Personas extends AppCompatActivity implements PersonaAdapter.
         intent.putExtra("position", position);
         addPersonaLauncher.launch(intent);
     }
+
+//    //crashlytics
+//
+//    FirebaeCrashlytics crashlytics = FirebaseCrashlytics.getInstance();
+//    crashlytics.setUserId("user 12345");
+//    crashlytics.setCustomKey("screen", "Lista_Personas");
+//
+//    Button btnCrash = findViewById(R.id.btnCrash);
+//    btnCrash.setOnClickListener(new View.OnClickListener() {
+//        @Override
+//        public void onClick(View v) {
+//            throw new RuntimeException("Forzado de Crash");
+//        }
+//    });
+//
+//    Button btnCapturar = findViewById(R.id.btnCapturar);
+//    btnCapturar.setOnClickListener(v -> {
+//        try {
+//            int resultado = 10 / 0;
+//        } catch (Exception e) {
+//            //registramos el error sin crashear la app
+//            FirebaseCrashlytics.getInstance().recordException(e);
+//        }
+//    }
 }
 

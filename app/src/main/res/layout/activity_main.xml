@@ -66,6 +66,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingHorizontal="8dp" />
+
+
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
@@ -82,5 +84,22 @@
         app:iconPadding="0dp"
         app:iconSize="40dp"
         app:iconTint="@android:color/white" />
+
+    <Button
+        android:id="@+id/btnCrash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="456dp"
+        android:text="Forzar Crash" />
+
+    <Button
+        android:id="@+id/btnCapturar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="506dp"
+        android:text="Capturar Exceptiom" />
+
+
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
