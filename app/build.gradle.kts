@@ -61,6 +61,7 @@ dependencies {
     //crashlytics
 //    implementation ("com.google.firebase:firebase-crashlytics")
 //    implementation ("com.google.firebase:firebase-analytics")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

@@ -170,10 +170,9 @@ public class Lista_Personas extends AppCompatActivity implements PersonaAdapter.
 
                     for (int i = 0; i < attendees.size(); i++) {
                         JsonObject personaObject = attendees.get(i).getAsJsonObject();
-                        // Cambia los campos según tu JSON real
                         String nombre = personaObject.getAsJsonObject("profile").get("first_name").getAsString();
                         String apellido = personaObject.getAsJsonObject("profile").get("last_name").getAsString();
-                        String edad = "N/A"; // si no viene edad
+                        String edad = "N/A";
 
                         listaPersonas.add(new Persona(nombre, apellido, edad));
                     }

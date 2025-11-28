@@ -22,7 +22,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.listadeeventos.Adapters.ListaAdapter;
 import com.example.listadeeventos.Models.Evento;
 import com.example.listadeeventos.network.Analytics;
+import com.example.listadeeventos.network.EventoApi;
 import com.example.listadeeventos.network.Performance_Monitoring;
+import com.example.listadeeventos.network.RetrofitClient;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
@@ -34,11 +36,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class Lista_Eventos  extends AppCompatActivity implements ListaAdapter.OnItemActionListener {
     private RecyclerView recyclerEvento;
@@ -150,10 +151,25 @@ public class Lista_Eventos  extends AppCompatActivity implements ListaAdapter.On
 
     @Override
     public void onDeleteClick(Evento evento, int position) {
-        listaAdapter.removeItem(position);
-        Toast.makeText(this, "Elemento eliminado: " + evento.getTitulo(), Toast.LENGTH_SHORT).show();
-    }
+        EventoApi api = RetrofitClient.getClient().create(EventoApi.class);
 
+        api.borrarEvento(evento.getId()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    listaAdapter.removeItem(position);
+                    Toast.makeText(Lista_Eventos.this, "Evento eliminado correctamente", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(Lista_Eventos.this, "Error al eliminar el evento: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(Lista_Eventos.this, "Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
     @Override
     public void onEditClick(Evento evento, int position) {
         Intent intent = new Intent(this, com.example.listadeeventos.editEvento_Activity.class);
@@ -172,57 +188,26 @@ public class Lista_Eventos  extends AppCompatActivity implements ListaAdapter.On
     }
 
     private void fetchEvents() {
-        OkHttpClient client = new OkHttpClient();
-        Gson gson = new Gson();
-        String url = "http://10.0.2.2:5000/eventos";
-        long startTime = System.nanoTime();
-        Performance_Monitoring.getInstance().startListLoadTrace();
 
-        Request request = new Request.Builder().url(url).build();
-        Log.d("DEBUG_URL", "Conectando a: " + url);
+        EventoApi api = RetrofitClient.getClient().create(EventoApi.class);
 
-        client.newCall(request).enqueue(new Callback() {
+        api.getEventos().enqueue(new retrofit2.Callback<List<Evento>>() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                long duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
-                Performance_Monitoring.getInstance().endListLoadTraceWithError(duration, e.getMessage(), 0);
-                e.printStackTrace();
-                runOnUiThread(() -> Toast.makeText(Lista_Eventos.this, "Error al conectar el servidor", Toast.LENGTH_LONG).show());
+            public void onResponse(retrofit2.Call<List<Evento>> call, retrofit2.Response<List<Evento>> response) {
+
+                if (response.isSuccessful() && response.body() != null) {
+                    listaEventos.clear();
+                    listaEventos.addAll(response.body());
+                    listaAdapter.notifyDataSetChanged();
+                    Toast.makeText(Lista_Eventos.this, "Eventos cargados desde MockAPI", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(Lista_Eventos.this, "Error en datos", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                long duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
-                int statuscode = response.code();
-
-                if (response.isSuccessful()) {
-                    String data = response.body().string();
-                    Log.d("DEBUG_JSON", data);
-
-                    Type listType = new TypeToken<List<Evento>>() {}.getType();
-                    List<Evento> events = gson.fromJson(data, listType);
-
-                    Analytics.getInstance().trackApiCallSuccess(
-                            "GET /eventos", duration, data.length()
-                    );
-                    Analytics.getInstance().trackListView(
-                            events.size(), "api", duration
-                    );
-                    long responseSize = response.body().contentLength();
-
-                    runOnUiThread(() -> {
-                        listaEventos.addAll(events);
-                        listaAdapter.notifyDataSetChanged();
-
-                        Performance_Monitoring.getInstance().endListLoadTrace(events.size(), duration, statuscode, responseSize);
-                    });
-                } else {
-                    Analytics.getInstance().trackApiCallError(
-                            "GET /eventos", "http_error", response.code()
-                    );
-                    Performance_Monitoring.getInstance().endListLoadTraceWithError(duration, "Error en la respuesta del servidor", statuscode);
-                    runOnUiThread(() -> Toast.makeText(Lista_Eventos.this, "Error al recibir datos del servidor", Toast.LENGTH_LONG).show());
-                }
+            public void onFailure(retrofit2.Call<List<Evento>> call, Throwable t) {
+                Toast.makeText(Lista_Eventos.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
