@@ -33,7 +33,7 @@ public class loggin_wraper {
         log(level, tag, message, null);
     }
 
-    // Log con payload (evita datos sensibles)
+    // Log con payload
     public static void log(int level, String tag, String message, Map<String, Object> payload) {
         if (payload != null) {
             Map<String, Object> safePayload = sanitizePayload(payload);
